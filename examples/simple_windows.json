@@ -1,0 +1,62 @@
+{
+    "locale": "en",
+    "start": {
+        "text": "Hello unknown user",
+        "markup": {
+            "type": "inline",
+            "markup": [
+                [
+                    {
+                        "text": "Register",
+                        "callback_data": "write_name"
+                    }
+                ]
+            ]
+        }
+    },
+    "write_name": {
+        "text": "Write your name please",
+        "markup": {
+            "type": "inline",
+            "markup": [
+                [
+                    {
+                        "text": "back",
+                        "callback_data": "start"
+                    }
+                ]
+            ]
+        },
+        "next_step": "write_age"
+    },
+    "write_age": {
+        "text": "Your name is {name}\nwrite your age please",
+        "markup": {
+            "type": "inline",
+            "markup": [
+                [
+                    {
+                        "text": "back",
+                        "callback_data": "write_name"
+                    }
+                ]
+            ]
+        },
+        "allowed_updates": ["text"],
+        "input_filters": [
+            {
+                "text": "100",
+                "next_step": "too_old"
+            }
+        ],
+        "next_step": "save_data"
+
+    },
+    "save_data": {
+        "text": "Your name is {name}\nYou {age} years old\nThank you!",
+        "allowed_updates": ["text"]
+    },
+    "too_old": {
+        "text": "You too old :0"
+    }
+}

@@ -1,0 +1,57 @@
+[tool.poetry]
+name = "jgram"
+version = "1.0.0-alpha"
+description = "Simple wrapper over aiogram for create bots structure in json files"
+authors = ["grehban <maximfeedback19@gmail.com>"]
+maintainers = ["grehban <maximfeedback19@gmail.com>"]
+keywords = ["telegram", "bot", "aiogram", "api", "wrapper", "json", "asyncio"]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Environment :: Console",
+    "Framework :: AIOgram",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+aiogram = "^2.21"
+ujson = "^5.3.0"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^4.0.1"
+isort = "^5.10.1"
+pytest = "^7.1.2"
+pytest-asyncio = "^0.18.3"
+pytest-mock = "^3.8.1"
+toml = "^0.10.2"
+typing-extensions = "^4.2.0"
+mypy = "^0.961"
+towncrier = "^21.9.0"
+Sphinx = "^5.0.2"
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+line_length = 99
+
+[tool.pytest.ini_options]
+addopts = "--maxfail=2 -rf --asyncio-mode=auto"
+testpaths = [
+    "tests",
+]
+
+[tool.towncrier]
+package = "jgram"
+filename = "CHANGES.rst"
+directory = "CHANGES/"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
