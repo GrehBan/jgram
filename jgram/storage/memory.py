@@ -15,14 +15,13 @@ class MemoryStorage(BaseStorage):
     def __init__(self):
         self._storage: Dict[str, Union[Any, Dict]] = dict()
     
-    async def get_user(self, user_id: int, create_user: bool = False, no_error: bool = False) -> Dict:
+    async def get_user(self, user_id: int, create_user: bool = False) -> Dict:
+        await self.check_user(user_id, create_user)
         user = self._storage.get(user_id)
-        if user is None:
-            return await self.load_user(user_id, create_user, no_error)
-        return user
+        return deepcopy(user)
     
-    async def get_data(self, user_id: int, create_user: bool = False, no_error: bool = False) -> Dict:
-        user = await self.get_user(user_id, create_user, no_error)
+    async def get_data(self, user_id: int, create_user: bool = False) -> Dict:
+        user = await self.get_user(user_id, create_user)
         return deepcopy(user['data'])
     
     async def update_data(self, user_id: int, create_user: bool = False, data: Optional[Dict] = None, **kwargs):
@@ -50,8 +49,8 @@ class MemoryStorage(BaseStorage):
     async def create_user(self, user_id: int) -> Dict:
         created = dict(
             locale=None,
+            window_name=None,
             data=dict(
-                window_name=None
             )
         )
         self._storage[user_id] = deepcopy(created)
@@ -61,13 +60,24 @@ class MemoryStorage(BaseStorage):
         self._storage.pop(user_id, None)
 
     async def set_locale(self, user_id: int, locale: str, create_user: bool = False):
-        user = await self.get_user(user_id, create_user)
-        user['locale'] = locale
+        await self.check_user(user_id=user_id, create_user=create_user)
+        self._storage[user_id]['locale'] = locale
         
     async def get_locale(self, user_id: int, create_user: bool = False) -> Optional[str]:
-        if create_user is True and user_id not in self._storage:
-            await self.create_user(user_id)
-        if user_id not in self._storage:
-            raise ValueError(f'User with {user_id} id not found in storage')
-        
+        await self.check_user(user_id=user_id, create_user=create_user)
         return self._storage[user_id]['locale']
+
+    async def set_window(self, user_id: int, window_name: str, create_user: bool = False):
+        await self.check_user(user_id=user_id, create_user=create_user)
+        self._storage[user_id]['window_name'] = window_name
+    
+    async def get_window(self, user_id: int, create_user: bool = False) -> Optional[str]:
+        await self.check_user(user_id=user_id, create_user=create_user)
+        return self._storage[user_id]['window_name']
+    
+    async def check_user(self, user_id: int, create_user: bool = False):
+        if create_user is True and user_id not in self._storage:
+            await self.create_user(user_id=user_id)
+        if user_id in self._storage:
+            return True
+        raise ValueError(f'user with id `{user_id}` not found in storage')

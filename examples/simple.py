@@ -3,6 +3,7 @@ import os
 
 from jgram import Registry
 from jgram.context import Context
+from jgram.loggers import logging, root_logger
 from jgram.manager import WindowsManager
 
 

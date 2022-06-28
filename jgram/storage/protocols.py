@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from ctypes import Union
 from typing import Dict, Optional, Protocol
 
 
@@ -13,7 +14,7 @@ class StorageProto(Protocol):
         pass
     
     @abstractmethod
-    async def get_data(self, user_id: int, create_user: bool = False, no_error: bool = False) -> Dict:
+    async def get_data(self, user_id: int, create_user: bool = False) -> Dict:
         pass
     
     @abstractmethod
@@ -29,7 +30,7 @@ class StorageProto(Protocol):
         pass
     
     @abstractmethod
-    async def get_user(self, user_id: int, create_user: bool = False, no_error: bool = False) -> Optional[Dict]:
+    async def get_user(self, user_id: int, create_user: bool = False) -> Dict:
         pass
     
     @abstractmethod
@@ -41,10 +42,6 @@ class StorageProto(Protocol):
         pass
 
     @abstractmethod
-    async def load_user(self, user_id: int, create_user: bool = False, no_error: bool = False) -> Dict:
-        pass
-
-    @abstractmethod
     async def get_locale(self, user_id: int, create_user: bool = False) -> Optional[str]:
         pass
     
@@ -52,14 +49,19 @@ class StorageProto(Protocol):
     async def set_locale(self, user_id: int, locale: str, create_user: bool = False):
         pass
 
+    @abstractmethod
+    async def set_window(self, user_id: int, window_name: str, create_user: bool = False):
+        pass
+    
+    @abstractmethod
+    async def get_window(self, user_id: int, create_user: bool = False) -> Optional[str]:
+        pass
+    
+    @abstractmethod
+    async def check_user(self, user_id: int, create_user: bool = False) -> bool:
+        pass
+
 
 class BaseStorage(StorageProto):
-    async def load_user(self, user_id: int, create_user: bool = False, no_error: bool = False) -> Dict:
-        if create_user is True:
-            return await self.create_user(user_id=user_id)
-        elif no_error is True:
-            return {}
-        raise ValueError(f'User with {user_id} id not found in storage')
-    
     async def reset_data(self, user_id: int, create_user: bool = False):
         await self.set_data(user_id=user_id, create_user=create_user, data={})

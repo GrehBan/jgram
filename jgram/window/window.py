@@ -15,6 +15,12 @@ class ShowMode(Enum):
 
 
 @dataclass
+class InputFilter:
+    next_step: str
+    when: Dict
+    
+
+@dataclass(unsafe_hash=True)
 class RawWindow:
     window_name: str
     text: Optional[str] = None
@@ -27,7 +33,7 @@ class RawWindow:
     next_step: Optional[str] = None
     allowed_updates: List[str] = field(default_factory=list)
     reset_context: bool = False
-    input_filters: List[Dict] = field(default_factory=list)
+    input_filters: List[InputFilter] = field(default_factory=list)
     
     def __post_init__(self):
         if self.allowed_updates \
@@ -37,22 +43,16 @@ class RawWindow:
             raise exceptions.InvalidWindowFieldsMap(
                 "Unknown allowed updates list"
             )
-        if self.next_step and self.input_filters:
+        
+        if self.input_filters:
+            self.input_filters: List[Dict]
+            _input_filters = []
             for filter in self.input_filters:
-                if 'next_step' not in filter:
-                    raise exceptions.InvalidWindowFieldsMap(
-                        "needs 'next_step' field in 'input_filters' filter " 
-                    )
-                if 'text' not in filter:
-                    raise exceptions.InvalidWindowFieldsMap(
-                        "needs 'text' field in 'input_filters' filter"
-                    )
-                if filter['next_step'] == self.next_step:
-                    raise exceptions.InvalidWindowFieldsMap(
-                        "You can't use the same window at 'next_step' field and "
-                        "as next step in 'input_filters' field"
-                    )
-            
+                filter = filter.copy()
+                next_step = filter.pop('next_step')
+                _input_filters.append(InputFilter(next_step, filter))
+            self.input_filters: List[InputFilter] = _input_filters
+    
     def build(self, context_data: Dict) -> Dict:
         text = self.text
         media = self.media

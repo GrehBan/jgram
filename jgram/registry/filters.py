@@ -16,8 +16,7 @@ class HaveWindowFilter(Filter):
     async def check(self, update: TelegramObject, *args) -> Union[bool, Dict]:
         user = await self._storage.get_user(user_id=update.from_user.id, 
                                                  create_user=True)
-        user_data = user['data']
-        window_name = user_data['window_name']
+        window_name = user['window_name']
         if bool(window_name) is True:
             return {'window_name': window_name, 'user': user}
         return False

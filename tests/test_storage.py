@@ -8,8 +8,9 @@ from . import FakeStorage, FakeUser
 class TestStorage:
     storage = MemoryStorage()
     _USER_KEYS_ = [
+        'data',
         'locale',
-        'data'
+        'window_name'
     ]
     
     @pytest.mark.asyncio
@@ -17,7 +18,8 @@ class TestStorage:
         created = await self.storage.create_user(user_id=FakeUser.id)
         
         assert isinstance(created, dict) \
-            and list(created.keys()) == self._USER_KEYS_
+            and len(created) == len(self._USER_KEYS_) and\
+            all((key in self._USER_KEYS_ for key in created))
     
     @pytest.mark.asyncio
     async def test_storage_data_update_get(self):

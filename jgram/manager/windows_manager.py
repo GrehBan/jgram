@@ -130,7 +130,7 @@ class WindowsManager(ManagerProto):
             **raw_window.build(context_data)
         )
         await self.show_window(bot=update.bot, window=window, old_message=old_message)
-        await self.storage.update_data(user_id=update.from_user.id,
+        await self.storage.set_window(user_id=update.from_user.id,
                                        create_user=True,
                                        window_name=raw_window.window_name)
         return window

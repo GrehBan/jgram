@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "jgram"
-version = "1.0.0-alpha"
+version = "1.0.2-alpha"
 description = "Simple wrapper over aiogram for create bots structure in json files"
 authors = ["grehban <maximfeedback19@gmail.com>"]
 maintainers = ["grehban <maximfeedback19@gmail.com>"]

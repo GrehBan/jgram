@@ -1,3 +1,34 @@
+Jgram 1.0.2-alpha (2022-06-28)
+==============================
+
+Features
+--------
+- Added full support of aiogram's filters
+  
+  for example
+
+  .. code-block:: javascript
+    {
+      "filtered": {
+        "text": "Hello",
+        "input_filters": [
+          {
+          "chat_id": 123,
+          "next_step": "chat_123"
+          },
+          "next_step": "any_another_chat"
+        ]
+      }
+    }
+  
+  if current update chat_id is 123 renders "chat_123" window, in another situations renders "any_another_chat" window
+
+Misc
+--------
+- Moved users data :code:`user["data"]["window_name"]` field to :code:`user["window_name"]`
+- added :code:`.set_window` and :code:`.get_window` methods to storage
+- method :code:`.load_user` moved from :code:`jgram.storage.protocols.BaseStorage` to :code:`jgram.storage.protocols.StorageProto` and marked as abtract method
+
 Jgram 1.0.0-alpha (2022-06-28)
 ==============================
 
@@ -35,7 +66,7 @@ Features
       pass
 
 - Added .reset method to :code:`jgram.context.Context`, it will clear data and set window_name to None
-- added start_window attribute to :code:`manager.windows_manager.WindowsManager`, for change standart window rendered for /start command
+- added start_window attribute to :code:`jgram.manager.windows_manager.WindowsManager`, for change standart window rendered for /start command
   
   for example
 
