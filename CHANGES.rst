@@ -21,7 +21,7 @@ Features
       }
     }
   
-  if current update chat_id is 123 renders "chat_123" window, in another situations renders "any_another_chat" window
+  if current update chat id is 123 renders "chat_123" window, in another situations renders "any_another_chat" window
 
 Misc
 --------

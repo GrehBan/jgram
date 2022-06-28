@@ -3,7 +3,6 @@ import os
 
 from jgram import Registry
 from jgram.context import Context
-from jgram.loggers import logging, root_logger
 from jgram.manager import WindowsManager
 
 
@@ -21,7 +20,10 @@ async def main():
     registry.register_middleware(name_formatter, name='write_age')
     registry.register_middleware(age_formatter, name='save_data')
 
-    await registry.start()
+    try:
+        await registry.start()
+    finally:
+        await registry.close()
 
 
 if __name__ == '__main__':

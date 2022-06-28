@@ -7,6 +7,7 @@
 - [ ] write context tests  
 - [ ] start using mock  
 - [ ] write docstrings  
+- [ ] write filters tests
 
 ### IN PROGRESS
 

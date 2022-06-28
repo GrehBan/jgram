@@ -51,7 +51,7 @@ async def update_handler(update: Union[CallbackQuery, Message],
                 filters_set = dispatcher.filters_factory.resolve(
                     dispatcher.message_handlers,
                     **filter.when
-                )                
+                )           
                 try:
                     kwargs.update(await check_filters(
                         get_filters_spec(dispatcher, filters_set), 
