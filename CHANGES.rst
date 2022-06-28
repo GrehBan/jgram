@@ -15,9 +15,9 @@ Features
           {
           "chat_id": 123,
           "next_step": "chat_123"
-          },
-          "next_step": "any_another_chat"
-        ]
+          }
+        ],
+        "next_step": "any_another_chat"
       }
     }
   
