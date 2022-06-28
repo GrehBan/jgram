@@ -43,7 +43,7 @@
             ]
         },
         "allowed_updates": ["text"],
-        "input_filters": [
+        "filters": [
             {
                 "text": "100",
                 "next_step": "too_old"

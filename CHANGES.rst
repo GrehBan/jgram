@@ -11,7 +11,7 @@ Features
     {
       "filtered": {
         "text": "Hello",
-        "input_filters": [
+        "filters": [
           {
           "chat_id": 123,
           "next_step": "chat_123"
@@ -28,6 +28,7 @@ Misc
 - Moved users data :code:`user["data"]["window_name"]` field to :code:`user["window_name"]`
 - added :code:`.set_window` and :code:`.get_window` methods to storage
 - method :code:`.load_user` moved from :code:`jgram.storage.protocols.BaseStorage` to :code:`jgram.storage.protocols.StorageProto` and marked as abtract method
+- renamed :code:`input_filters` window field to :code:`filters`
 
 Jgram 1.0.0-alpha (2022-06-28)
 ==============================

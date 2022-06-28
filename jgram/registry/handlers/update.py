@@ -46,8 +46,8 @@ async def update_handler(update: Union[CallbackQuery, Message],
         filter_passed = False
         dispatcher = registry.dispatcher
         
-        if raw_window.input_filters: # filter input
-            for filter in raw_window.input_filters:
+        if raw_window.filters: # filter
+            for filter in raw_window.filters:
                 filters_set = dispatcher.filters_factory.resolve(
                     dispatcher.message_handlers,
                     **filter.when

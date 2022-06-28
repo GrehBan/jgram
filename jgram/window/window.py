@@ -15,7 +15,7 @@ class ShowMode(Enum):
 
 
 @dataclass
-class InputFilter:
+class Filter:
     next_step: str
     when: Dict
     
@@ -33,7 +33,7 @@ class RawWindow:
     next_step: Optional[str] = None
     allowed_updates: List[str] = field(default_factory=list)
     reset_context: bool = False
-    input_filters: List[InputFilter] = field(default_factory=list)
+    filters: List[Filter] = field(default_factory=list)
     
     def __post_init__(self):
         if self.allowed_updates \
@@ -44,14 +44,14 @@ class RawWindow:
                 "Unknown allowed updates list"
             )
         
-        if self.input_filters:
-            self.input_filters: List[Dict]
-            _input_filters = []
-            for filter in self.input_filters:
+        if self.filters:
+            self.filters: List[Dict]
+            _filters = []
+            for filter in self.filters:
                 filter = filter.copy()
                 next_step = filter.pop('next_step')
-                _input_filters.append(InputFilter(next_step, filter))
-            self.input_filters: List[InputFilter] = _input_filters
+                _filters.append(Filter(next_step, filter))
+            self.filters: List[Filter] = _filters
     
     def build(self, context_data: Dict) -> Dict:
         text = self.text
