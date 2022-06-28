@@ -154,7 +154,7 @@ if __name__ == '__main__':
 
 
     # registry initialize new jgram.WindowsManager instance, if manager argument is not provided
-    manager -> typing.Optional[jgram.WindowsManager] # current manager for manager windows
+    manager -> typing.Optional[jgram.WindowsManager] # current manager for manage windows
  ```
 
 ### Windows manager
@@ -215,14 +215,14 @@ loader = JsonLoader()
         [
             [{"text": "Button text", "callback_data": "{next_step callback data}"}],
             [{"text": "Url button", "url": "{url}"}],
-            [{"text": "Reply button"}]...
+            [{"text": "Reply button"}]
         ],
     "parse_mode": null,
     "web_preview": false,
-    "allowed_updates": ["{update_type}"...],
+    "allowed_updates": ["{update_type}"],
     "filters": [
         {
-            "{filter_name}": "{value}"...,
+            "{filter_name}": "{value}",
             "next_step": "{value}"
         }
     ],
@@ -310,7 +310,7 @@ manager.load_windows("path/to/file/windows.json")
 ## Middlewares
 middlewares called before window rendered, and in middleware you can change user context data
 
-middlewares can return a True or False, if returns True, update handler will continue render window, but is returns False, window will not be rendered
+middlewares can return a True or False, if returns True, update handler will continue render window, but if returns False, window will not be rendered
 
 for example
 
