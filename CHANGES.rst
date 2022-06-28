@@ -6,20 +6,8 @@ Features
 - Added full support of aiogram's filters
   
   for example
-
-  .. code-block:: javascript
-    {
-      "filtered": {
-        "text": "Hello",
-        "filters": [
-          {
-          "chat_id": 123,
-          "next_step": "chat_123"
-          }
-        ],
-        "next_step": "any_another_chat"
-      }
-    }
+  
+  https://github.com/GrehBan/jgram#aiograms-filters
   
   if current update chat id is 123 renders "chat_123" window, in another situations renders "any_another_chat" window
 
