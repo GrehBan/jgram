@@ -287,7 +287,7 @@ loader = JsonLoader()
 "filters" -> typing.List[typing.Dict] # list of dicts than represents aiogram's filters
     default = []
 
-    "{filter_name}" -> str # any aiogram's filter name
+    "{filter_name}" -> str # Aiogram's filter value
     ...
     "next_step" -> str # name of window than be rendered when filters passed
 ```
