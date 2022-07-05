@@ -1,3 +1,36 @@
+Jgram 1.0.4-alpha (2022-07-05)
+==============================
+
+Features
+--------
+- Added support of custom loads functions in loader, you can pass your function in initialization arguments
+  
+  for example
+
+  .. code-block:: python
+
+    
+    import ujson
+    from jgram.loader import JsonLoader
+    
+    loader = JsonLoader(json_loads=ujson.loads)
+
+Bugfix
+--------
+- Fixed bug with stop check aiogram's filters, if one not passed
+- Fixed bug with no change window, if it changed in context
+
+Misc
+--------
+- Removed :code:`.delete_user` :code:`.check_user` :code:`.create_user` methods from storage
+- Created :code:`jgram.storage.protocols.StorageRecord` record, that represents a user record in storage
+- :code:`jgram.storage.memory.MemoryStorage` start using :code:`collections.defaultdict` as storage
+- Removed :code:`jgram.json` module, use :code:`json_loads` attribute in loaders instead
+- Renamed loaders :code:`.load_json` method to :code:`.load_windows`
+- Renamed :code:`jgram.registry.filters` to :code:`jgram.registry.includer`
+- From :code:`jgram.registry.includer` deleted :code:`HaveWindow` and :code:`IncludeRegistry` filters, created :code:`IncludeData` instead
+- Clean
+
 Jgram 1.0.2-alpha (2022-06-28)
 ==============================
 
@@ -6,8 +39,21 @@ Features
 - Added full support of aiogram's filters
   
   for example
-  
-  https://github.com/GrehBan/jgram#aiograms-filters
+
+  .. code-block:: javascript
+
+    {
+      "filtered": {
+        "text": "Hello",
+        "filters": [
+          {
+          "chat_id": 123,
+          "next_step": "chat_123"
+          }
+        ],
+        "next_step": "any_another_chat"
+      }
+    }
   
   if current update chat id is 123 renders "chat_123" window, in another situations renders "any_another_chat" window
 

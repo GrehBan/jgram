@@ -40,6 +40,6 @@ class ManagerProto(Protocol):
                           context_data: Dict,
                           mode: ShowMode,
                           name: Optional[str] = None,
-                          raw_text: Optional[RawWindow] = None,
+                          raw_window: Optional[RawWindow] = None,
                           ) -> Window:
         pass

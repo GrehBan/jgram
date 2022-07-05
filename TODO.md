@@ -15,7 +15,6 @@
 - [ ] write storage lock  
 - [ ] write redis storage  
 - [ ] restructurize tests  
-- [ ] write README  
 - [ ] write examples  
 
 ### DONE ✓
@@ -25,3 +24,4 @@
 - [x] rewrite some protocols  
 - [x] log debug information  
 - [x] rewrite some typehints  
+- [x] write README  

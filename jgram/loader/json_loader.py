@@ -1,18 +1,25 @@
+import json
 import os
 import os.path
 from io import TextIOBase
-from typing import IO, Optional, Tuple, Union
+from typing import IO, Any, Callable, Dict, Optional, Tuple, Union
 
-from .. import _types, exceptions, json
+from .. import _types, exceptions
 from ..loggers import loader_logger
 from . import tools
-from .protocols import LoadedWindows, LoaderProto
+from .protocols import LoaderProto
+
+JsonLoads = Callable[..., Any]
 
 
 class JsonLoader(LoaderProto):
     
-    def __init__(self, default_locale: Optional[str] = 'en'):
+    def __init__(self, 
+                 default_locale: Optional[str] = 'en',
+                 json_loads: JsonLoads = json.loads):
+
         self._default_locale = default_locale
+        self.loads = json_loads
         
         if self._default_locale is None:
             loader_logger.warning(
@@ -21,10 +28,10 @@ class JsonLoader(LoaderProto):
                 'all of them must have a \'locale\' field'
             )
         
-    def load_from_stream(self, stream: IO[bytes]) -> Tuple[str, json.LoadedJson]:
+    def load_from_stream(self, stream: IO[bytes]) -> Tuple[str, Dict[str, Any]]:
         try:
-            loaded_json = json.load(stream)
-        except json.DecodeError as e:
+            loaded_json = self.loads(stream.read())
+        except ValueError as e:
             raise exceptions.InvalidJsonFormat(
                 file_name=tools.abspath(stream.name)
                 ) from e
@@ -37,7 +44,7 @@ class JsonLoader(LoaderProto):
             )
         return locale, loaded_json
     
-    def load_from_file(self, fp: _types.PathLike) -> Tuple[str, json.LoadedJson]:
+    def load_from_file(self, fp: _types.PathLike) -> Tuple[str, Dict[str, Any]]:
 
         info = fp.split('.')
         
@@ -52,7 +59,7 @@ class JsonLoader(LoaderProto):
         with open(fp, 'rb') as fio:
             return self.load_from_stream(fio)
   
-    def load_from_dir(self, dp: _types.PathLike) -> LoadedWindows:
+    def load_from_dir(self, dp: _types.PathLike) -> Dict[str, Any]:
         loaded_windows = {}
         for fp in tools.iterdir(dp):
             locale, loaded_json = self.load_from_file(fp)
@@ -60,9 +67,9 @@ class JsonLoader(LoaderProto):
             
         return loaded_windows
         
-    def load_json(self, fp: Union[_types.PathLike, IO[bytes]]) -> LoadedWindows:
+    def load_windows(self, fp: Union[_types.PathLike, IO[bytes]]) -> Dict[str, Any]:
         
-        loaded_windows: LoadedWindows = dict()
+        loaded_windows = dict()
         
         if isinstance(fp, str):
             fp = tools.abspath(fp)

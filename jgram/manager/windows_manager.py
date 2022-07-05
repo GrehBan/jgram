@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import IO, Dict, Optional, Union
+from typing import IO, Any, Dict, Optional, Union
 
 from aiogram import Bot
 from aiogram.types import CallbackQuery, InputMedia, Message
@@ -14,7 +14,6 @@ from aiogram.utils.exceptions import (
 
 from .. import _types, exceptions
 from ..loader import JsonLoader, LoaderProto
-from ..loader.protocols import LoadedWindows
 from ..loggers import manager_logger
 from ..storage.memory import MemoryStorage
 from ..storage.protocols import BaseStorage
@@ -51,7 +50,7 @@ class WindowsManager(ManagerProto):
             )
         
         self._loader = loader
-        self._windows: LoadedWindows = {}
+        self._windows: Dict[str, Any] = {}
         self._storage = storage
         self._start_window = start_window
         
@@ -64,7 +63,7 @@ class WindowsManager(ManagerProto):
         )
     
     @property
-    def windows(self) -> LoadedWindows:
+    def windows(self) -> Dict[str, Any]:
         if not self._windows:
             raise exceptions.NotLoadedError()
         return self._windows
@@ -85,7 +84,7 @@ class WindowsManager(ManagerProto):
         return next(iter(self.windows))
 
     def load_windows(self, fp: Union[_types.PathLike, IO[bytes]]):
-        self._windows = self._loader.load_json(fp=fp)
+        self._windows = self._loader.load_windows(fp=fp)
 
     def get_window(self, name: str, locale: str) -> RawWindow:
         windows = self.windows.get(locale)
@@ -131,7 +130,6 @@ class WindowsManager(ManagerProto):
         )
         await self.show_window(bot=update.bot, window=window, old_message=old_message)
         await self.storage.set_window(user_id=update.from_user.id,
-                                       create_user=True,
                                        window_name=raw_window.window_name)
         return window
     
