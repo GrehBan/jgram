@@ -6,39 +6,42 @@ from aiogram import Bot
 WORK_DIR = os.path.dirname(__file__)
 
 
+User = namedtuple('User', 'id')
+Chat = namedtuple('Chat', 'id')
+Update = namedtuple('Update', 'from_user')
+Context = namedtuple('Context', 'locale user_id data')
+RawWindow = namedtuple('RawWindow', 'window_name reset allowed_updates next_step clear')
+StorageRecord = namedtuple('StorageRecord', 'locale window_name user_id data')
+
+FakeUser = User(id=0)
+FakeChat = Chat(id=0)
+FakeMessage = Update(from_user=FakeUser)
+FakeBot = Bot(token='0:0', validate_token=False)
+FakeContext = Context('en', FakeUser.id, {})
+FakeRawWindow = RawWindow('start', False, None, None, False)
+FakeRecord = StorageRecord(None, None, FakeUser.id, {})
+
+
 class Storage:
-    _user_data = {
-            'window_name': 'window_name'
-        }
-    _user = {
-        'locale': 'en',
-        'data': _user_data
-    }
+    _user = StorageRecord('en', 'window_name', FakeUser.id, {})
     
     def __init__(self, empty: bool = False):
         self._empty = empty
-        
-    
-    async def create_user(self, *a, **kw):
-        if self._empty:
-            return {
-                'data': {}
-            }
-        return self._user
     
     async def get_user(self, *a, **kw):
         if self._empty:
-            return
+            return FakeRecord
         return self._user
     
     async def get_data(self, *a, **kw):
-        if self._empty:
-            return {}
-        return self._user_data
+        return self._user.data
     
     async def close(self):
         pass
 
+    async def wait_cloed(self):
+        pass
+    
 
 FakeWindow = {
     "text": "ok"
@@ -52,7 +55,7 @@ class Loader:
             }
         }
 
-    def load_json(self, *args, **kwargs):
+    def load_windows(self, *args, **kwargs):
         return self._json_
 
 
@@ -77,20 +80,6 @@ class Manager:
     
     async def close(self):
         pass
-    
-
-User = namedtuple('User', 'id')
-Chat = namedtuple('Chat', 'id')
-Update = namedtuple('Update', 'from_user')
-Context = namedtuple('Context', 'locale user_id data')
-RawWindow = namedtuple('RawWindow', 'window_name reset allowed_updates next_step clear')
-
-FakeUser = User(id=0)
-FakeChat = Chat(id=0)
-FakeMessage = Update(from_user=FakeUser)
-FakeBot = Bot(token='0:0', validate_token=False)
-FakeContext = Context('en', FakeUser.id, {})
-FakeRawWindow = RawWindow('start', False, None, None, False)
 
 FakeLoader = Loader()
 FakeStorage = Storage()

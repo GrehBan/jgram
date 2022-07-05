@@ -1,11 +1,12 @@
 
-from typing import TYPE_CHECKING, Dict, Union
+from typing import TYPE_CHECKING, Union
 
 from aiogram.dispatcher.filters import FilterNotPassed, check_filters, get_filters_spec
 from aiogram.types import CallbackQuery, Message
 
 from jgram.context import Context
 from jgram.loggers import handler_logger
+from jgram.storage.protocols import StorageRecord
 from jgram.window.window import ShowMode
 
 if TYPE_CHECKING:
@@ -15,14 +16,14 @@ if TYPE_CHECKING:
 async def update_handler(update: Union[CallbackQuery, Message], 
                          registry: 'Registry', 
                          window_name: str, 
-                         user: Dict,
+                         user: StorageRecord,
                          build_next_step: bool = True):
     manager = registry.manager
     kwargs = {
         'manager': manager
     }
     
-    locale = user['locale']
+    locale = user.locale
     if locale is None:
         locale = manager.default_locale
     
@@ -58,13 +59,14 @@ async def update_handler(update: Union[CallbackQuery, Message],
                         (update, )
                         )
                     )
+                except FilterNotPassed:
+                    continue
+                else:
                     filter_passed = True
                     raw_window = manager.get_window(name=filter.next_step, 
                                                     locale=locale)
                     break
-                except FilterNotPassed:
-                    break
-                
+
         if (
             filter_passed is False and
             build_next_step
@@ -73,8 +75,7 @@ async def update_handler(update: Union[CallbackQuery, Message],
                     window_name = raw_window.next_step
                     raw_window = manager.get_window(name=window_name, locale=locale)
                 else:
-                    await manager.storage.reset_data(user_id=update.from_user.id,
-                                                    create_user=True)
+                    await manager.storage.reset_data(user_id=update.from_user.id)
                     return
             
         # check allowed updates
@@ -88,11 +89,11 @@ async def update_handler(update: Union[CallbackQuery, Message],
                 f"allowed updates {raw_window.allowed_updates}, skip window update"
             )
             return
-    
+
     context = Context(
         user_id=update.from_user.id,
         locale=locale,
-        data=user['data'],
+        data=user.data,
         window_name=raw_window.window_name
     ) # build context
     kwargs['context'] = context
@@ -108,6 +109,13 @@ async def update_handler(update: Union[CallbackQuery, Message],
         
         return
     
+    if not context.window_name: # stop update processing, if text was set to None
+        return
+    
+    if context.window_name != raw_window.window_name: # switch window, if changed in context
+        raw_window = manager.get_window(name=context.window_name, 
+                                        locale=context.locale)
+
     await manager.update_window(
         update=update,
         locale=context.locale,
@@ -127,5 +135,4 @@ async def update_handler(update: Union[CallbackQuery, Message],
     # save context data to storage
     await manager.storage.update_data(
         user_id=update.from_user.id,
-        create_user=True,
         data=context.data)

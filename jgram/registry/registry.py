@@ -7,9 +7,9 @@ from aiogram.dispatcher.handler import Handler
 
 from ..loggers import registry_logger
 from ..manager import WindowsManager
-from .filters import HaveWindowFilter, IncludeRegistry
 from .handlers.start import start_handler
 from .handlers.update import update_handler
+from .includer import IncludeData
 from .middleware import ProcessMiddleware
 from .protocols import RegistryProto
 
@@ -40,24 +40,21 @@ class Registry(RegistryProto):
         self._manager = manager
         self._middlewares = ProcessMiddleware()
 
-        have_window = HaveWindowFilter(self.manager.storage)
-        include_registry = IncludeRegistry(self)
+        include_data = IncludeData(self)
 
         # register update handlers
         # insert it to first positions
         self.register_update_handler(start_handler,
                                      self.dispatcher.message_handlers,
-                                     include_registry, 
+                                     include_data, 
                                      commands=['start']) # start all dialogs from this handler
         self.register_update_handler(update_handler, 
                                      self.dispatcher.message_handlers,
-                                     have_window, 
-                                     include_registry,
+                                     include_data,
                                      index=1) # index 1 because start_handler added to index 0
         self.register_update_handler(update_handler,
                                      self.dispatcher.callback_query_handlers,
-                                     have_window,
-                                     include_registry,
+                                     include_data,
                                      index=0)
 
     def register_update_handler(self,

@@ -4,7 +4,7 @@
 Jgram was created to be able to quickly and conveniently write telegram bots, placing their structure in .json files
 Jgram based on [AIOgram-2.21](https://github.com/aiogram/aiogram/tree/v2.21) framework
 
-README and documentation writing in progess, see [TODO](/TODO.md) and [CHANGES](/CHANGES.rst)
+for development info see [TODO](/TODO.md) and [CHANGES](/CHANGES.rst)
 
 ## Table of contents
 - [Installation](#installation)
@@ -35,7 +35,7 @@ poetry install --no-dev
 
 ### Speedups
 ```bash
-pip install uvloop cchardet aiodns
+pip install uvloop cchardet aiodns ujson
 ```
 
 ## Getting started
@@ -192,6 +192,8 @@ loader = JsonLoader()
 
     default_locale -> typing.Optional[str] # locale than be used if "locale" field in window is not provided, if set to None, all of windows must have "locale" field
         default = 'en'
+    json_loads -> typing.Callable[..., Any] # function to loads json from string
+        default = json.loads # python's built-in json's module func
 ```
 
 ## Windows
