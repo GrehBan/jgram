@@ -15,6 +15,7 @@ class Context:
         context_logger.debug(
             f'builded context {self}'
         )
+
     def reset(self):
         self.data.clear()
         self.window_name = None

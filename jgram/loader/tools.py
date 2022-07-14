@@ -1,19 +1,17 @@
 import os
 import os.path
-from typing import Tuple
-
-from .. import _types
+from typing import Tuple, Union
 
 
-def abspath(fp: _types.PathLike) -> _types.PathLike:
+def abspath(fp: str) -> str:
     return os.path.abspath(fp)
 
 
-def joinpath(path: _types.PathLike, *paths: Tuple[_types.PathLike]) -> _types.PathLike:
+def joinpath(path: str, *paths: Tuple[str]) -> str:
     return abspath(os.path.join(path, *paths))
 
 
-def iterdir(dp: _types.PathLike) -> _types.PathLike:
+def iterdir(dp: str) -> str:
     for fp in os.listdir(dp):
         yield joinpath(dp, fp)
 

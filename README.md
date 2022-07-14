@@ -190,7 +190,7 @@ loader = JsonLoader()
 
 # initialization arguments
 
-    default_locale -> typing.Optional[str] # locale than be used if "locale" field in window is not provided, if set to None, all of windows must have "locale" field
+    default_locale -> typing.Optional[str] # locale which will be used if "locale" field in window is not provided, if set to None, all of windows must have "locale" field
         default = 'en'
     json_loads -> typing.Callable[..., Any] # function to loads json from string
         default = json.loads # python's built-in json's module func
@@ -238,7 +238,7 @@ loader = JsonLoader()
 ### Fields
 
 ```python 
-"lang" -> typing.Optional[str] # The windows file translations language
+"lang" -> typing.Optional[str] # Locale of windows
 ```
 
 ```python
@@ -278,7 +278,7 @@ loader = JsonLoader()
 ```
 
 ```python
-"allowed_updates" -> typing.List[str] # list of content types than allowed to handle
+"allowed_updates" -> typing.List[str] # list of content types allowed for processing
     default = []
     values = ["text", "photo", "video", "animation", "audio", "document"]
 ```
@@ -310,7 +310,7 @@ manager.load_windows("path/to/file/windows.json")
 ```
 
 ## Middlewares
-middlewares called before window rendered, and in middleware you can change user context data
+middlewares call before window rendered, and in middleware you can change user context data or manipulate window processing
 
 middlewares can return a True or False, if returns True, update handler will continue render window, but if returns False, window will not be rendered
 
@@ -343,7 +343,7 @@ registry.register_middleware(middleware, name="window_name")
 
 ## Filters
 
-you have two ways to filter update, and stop render window, if filters not passed
+you have two ways to filter update
 
 ### Aiogram's filters
 
