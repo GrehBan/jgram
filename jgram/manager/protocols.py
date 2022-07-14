@@ -4,7 +4,6 @@ from typing import IO, Dict, Optional, Protocol, Union
 from aiogram import Bot
 from aiogram.types import CallbackQuery, Message
 
-from .. import _types
 from ..storage.protocols import BaseStorage
 from ..window.window import RawWindow, ShowMode, Window
 
@@ -26,7 +25,7 @@ class ManagerProto(Protocol):
         pass
     
     @abstractmethod
-    def load_windows(self, fp: Union[_types.PathLike, IO[bytes]]):
+    def load_windows(self, fp: Union[str, IO[bytes]]):
         pass
 
     @abstractmethod

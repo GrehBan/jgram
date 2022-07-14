@@ -12,7 +12,7 @@ from aiogram.utils.exceptions import (
     MessageToEditNotFound,
 )
 
-from .. import _types, exceptions
+from .. import exceptions
 from ..loader import JsonLoader, LoaderProto
 from ..loggers import manager_logger
 from ..storage.memory import MemoryStorage
@@ -83,7 +83,7 @@ class WindowsManager(ManagerProto):
         )
         return next(iter(self.windows))
 
-    def load_windows(self, fp: Union[_types.PathLike, IO[bytes]]):
+    def load_windows(self, fp: Union[str, IO[bytes]]):
         self._windows = self._loader.load_windows(fp=fp)
 
     def get_window(self, name: str, locale: str) -> RawWindow:
@@ -114,7 +114,7 @@ class WindowsManager(ManagerProto):
                           raw_window: Optional[RawWindow] = None) -> Window:
         if not name and not raw_window:
             raise ValueError(
-                "Need's `raw_window` or `name` to update text"
+                "Need's `raw_window` or `name` to update window"
             )
             
         old_message = update

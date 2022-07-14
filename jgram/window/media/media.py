@@ -4,8 +4,6 @@ from typing import Callable, Dict, Optional
 from aiogram import Bot
 from aiogram.types import ContentType, File, Message
 
-from jgram import _types
-
 
 @dataclass
 class MediaType:
@@ -51,7 +49,7 @@ MEDIA_TYPES = {
 @dataclass
 class Media:
     type: str
-    url: Optional[_types.PathLike] = None
+    url: Optional[str] = None
     file_id: Optional[str] = None
-    path: Optional[_types.PathLike] = None
+    path: Optional[str] = None
     kwargs: Dict = field(default_factory=dict)

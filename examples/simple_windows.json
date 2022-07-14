@@ -50,7 +50,6 @@
             }
         ],
         "next_step": "save_data"
-
     },
     "save_data": {
         "text": "Your name is {name}\nYou {age} years old\nThank you!",

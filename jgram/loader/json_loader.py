@@ -1,10 +1,14 @@
-import json
+try:
+    import ujson as json  # type: ignore
+except ImportError:
+    import json
+
 import os
 import os.path
 from io import TextIOBase
 from typing import IO, Any, Callable, Dict, Optional, Tuple, Union
 
-from .. import _types, exceptions
+from .. import exceptions
 from ..loggers import loader_logger
 from . import tools
 from .protocols import LoaderProto
@@ -28,12 +32,12 @@ class JsonLoader(LoaderProto):
                 'all of them must have a \'locale\' field'
             )
         
-    def load_from_stream(self, stream: IO[bytes]) -> Tuple[str, Dict[str, Any]]:
+    def load_from_stream(self, stream: IO) -> Tuple[str, Dict[str, Any]]:
         try:
             loaded_json = self.loads(stream.read())
         except ValueError as e:
             raise exceptions.InvalidJsonFormat(
-                file_name=tools.abspath(stream.name)
+                file_name=stream.name
                 ) from e
         
         locale = loaded_json.pop('locale', self._default_locale)
@@ -44,7 +48,7 @@ class JsonLoader(LoaderProto):
             )
         return locale, loaded_json
     
-    def load_from_file(self, fp: _types.PathLike) -> Tuple[str, Dict[str, Any]]:
+    def load_from_file(self, fp: str) -> Tuple[str, Dict[str, Any]]:
 
         info = fp.split('.')
         
@@ -59,7 +63,7 @@ class JsonLoader(LoaderProto):
         with open(fp, 'rb') as fio:
             return self.load_from_stream(fio)
   
-    def load_from_dir(self, dp: _types.PathLike) -> Dict[str, Any]:
+    def load_from_dir(self, dp: str) -> Dict[str, Any]:
         loaded_windows = {}
         for fp in tools.iterdir(dp):
             locale, loaded_json = self.load_from_file(fp)
@@ -67,7 +71,7 @@ class JsonLoader(LoaderProto):
             
         return loaded_windows
         
-    def load_windows(self, fp: Union[_types.PathLike, IO[bytes]]) -> Dict[str, Any]:
+    def load_windows(self, fp: Union[str, IO]) -> Dict[str, Any]:
         
         loaded_windows = dict()
         
@@ -85,7 +89,7 @@ class JsonLoader(LoaderProto):
             
                 return loaded_windows
         
-        elif isinstance(fp, TextIOBase):
+        elif isinstance(fp, TextIOBase) and fp.readable():
             locale, loaded_json = self.load_from_stream(fp)
             loaded_windows[locale] = loaded_json
             
@@ -93,5 +97,5 @@ class JsonLoader(LoaderProto):
         
         raise ValueError(
             f'Argument `fp` must be a valid file path or '\
-            f'file-like descriptor, not `{type(fp).__name__}`'
+            f'readable file-like descriptor, not `{type(fp).__name__}`'
             )

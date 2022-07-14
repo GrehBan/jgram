@@ -30,11 +30,11 @@ class TextBuildError(JgramError):
     pass
 
 
-class InvalidJsonFormat(JsonLoaderError):
+class InvalidJsonFormat(JsonLoaderError, ValueError):
     message: str = 'invalid format of json file {file_name!r}'
 
 
-class InvalidFileType(JsonLoaderError, OSError):
+class InvalidFileType(JsonLoaderError, ValueError):
     message: str = 'file to load must be a json type file, not {file_type!r}'
 
 

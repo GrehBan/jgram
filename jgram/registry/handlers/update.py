@@ -27,9 +27,7 @@ async def update_handler(update: Union[CallbackQuery, Message],
     if locale is None:
         locale = manager.default_locale
     
-    # get raw window
     if isinstance(update, CallbackQuery):
-        # if update is inline button click build window from callback_query.data
         window_name = update.data
         mode = ShowMode.EDIT
         raw_window = manager.get_window(window_name, locale)
@@ -47,7 +45,7 @@ async def update_handler(update: Union[CallbackQuery, Message],
         filter_passed = False
         dispatcher = registry.dispatcher
         
-        if raw_window.filters: # filter
+        if raw_window.filters:
             for filter in raw_window.filters:
                 filters_set = dispatcher.filters_factory.resolve(
                     dispatcher.message_handlers,
@@ -71,14 +69,13 @@ async def update_handler(update: Union[CallbackQuery, Message],
             filter_passed is False and
             build_next_step
             ):
-                if raw_window.next_step: # if filters not passed and need render next step, get it
+                if raw_window.next_step:
                     window_name = raw_window.next_step
                     raw_window = manager.get_window(name=window_name, locale=locale)
                 else:
                     await manager.storage.reset_data(user_id=update.from_user.id)
                     return
             
-        # check allowed updates
         if (
             raw_window.allowed_updates and
             update.content_type not in 
@@ -95,11 +92,9 @@ async def update_handler(update: Union[CallbackQuery, Message],
         locale=locale,
         data=user.data,
         window_name=raw_window.window_name
-    ) # build context
+    )
     kwargs['context'] = context
-    
-    # process middlewares
-    # if any middleware returns False, update processing was stop
+
     if (
         (await registry._middlewares.process(
             None, update, **kwargs)) is False
@@ -108,11 +103,11 @@ async def update_handler(update: Union[CallbackQuery, Message],
         ):
         
         return
-    
-    if not context.window_name: # stop update processing, if text was set to None
+
+    if not context.window_name:
         return
     
-    if context.window_name != raw_window.window_name: # switch window, if changed in context
+    if context.window_name != raw_window.window_name:
         raw_window = manager.get_window(name=context.window_name, 
                                         locale=context.locale)
 
@@ -122,9 +117,8 @@ async def update_handler(update: Union[CallbackQuery, Message],
         context_data=context.data,
         mode=mode,
         raw_window=raw_window
-    ) # update window name in storage, and render window
+    )
     
-    # reset context if need
     if raw_window.reset_context:
         handler_logger.debug(
             "'reset_context' field is True "
@@ -132,7 +126,6 @@ async def update_handler(update: Union[CallbackQuery, Message],
         )
         context.reset()
 
-    # save context data to storage
     await manager.storage.update_data(
         user_id=update.from_user.id,
         data=context.data)
