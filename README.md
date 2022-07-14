@@ -32,10 +32,21 @@ git clone https://github.com/GrehBan/jgram.git
 cd jgram
 poetry install --no-dev
 ```
+### From PYPI
+
+```bash
+pip install jgram
+```
 
 ### Speedups
 ```bash
 pip install uvloop cchardet aiodns ujson
+```
+
+or 
+
+```bash
+pip install jgram[fast]
 ```
 
 ## Getting started

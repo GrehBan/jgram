@@ -10,7 +10,6 @@ keywords = ["telegram", "bot", "aiogram", "api", "wrapper", "json", "asyncio"]
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Environment :: Console",
-    "Framework :: AIOgram",
     "Intended Audience :: Developers",
     "Intended Audience :: System Administrators",
     "Programming Language :: Python :: 3.8",
