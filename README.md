@@ -9,6 +9,7 @@ for development info see [TODO](/TODO.md) and [CHANGES](/CHANGES.rst)
 ## Table of contents
 - [Installation](#installation)
     - [From sources](#from-sources)
+    - [From PYPI](#from-pypi)
 - [Getting started](#getting-started)
 - [Initialization](#initialization)
     - [Registry](#registry)
