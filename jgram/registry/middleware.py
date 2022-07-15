@@ -15,12 +15,22 @@ class MiddlewareObj:
 
 
 class ProcessMiddleware:
+    """
+    Middlewares manager
+    """
     def __init__(self):
         self._middlewares: List[MiddlewareObj] = []
         self._named_middlewares: Dict[str, MiddlewareObj] = {}
         
         
     def register(self, middleware: Callable, name: Optional[str] = None):
+        """
+        Register callback as middleware
+
+        :param middleware: callback that be registered
+        :param name: the name of the window for which will be called middleware, defaults to None
+        :return:
+        """
         middleware = MiddlewareObj(
             middleware=middleware,
             spec=_get_spec(middleware)
@@ -31,6 +41,13 @@ class ProcessMiddleware:
             self._middlewares.append(middleware)
         
     async def process(self, name: Optional[str] = None, *args, **kwargs) -> bool:
+        """
+        call middleware
+        
+        :param name: name of the window for which will be called middleware, defaults to None
+        :return: flag that tells whether to continue rendering or not
+        :rtype: bool
+        """
         if name is not None and name in self._named_middlewares:
             result = await self._named_middlewares[name].call(args, kwargs)
             if result is False:

@@ -6,6 +6,10 @@ from ..loggers import context_logger
 
 @dataclass(unsafe_hash=True)
 class Context:
+    """
+    User's context
+    """
+    
     user_id: str
     locale: str
     data: Dict = field(default_factory=dict)
@@ -17,6 +21,9 @@ class Context:
         )
 
     def reset(self):
+        """
+        Reset user's context
+        """
         self.data.clear()
         self.window_name = None
 

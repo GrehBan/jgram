@@ -1,7 +1,6 @@
 
 from typing import TYPE_CHECKING, Union
 
-from aiogram.dispatcher.filters import FilterNotPassed, check_filters, get_filters_spec
 from aiogram.types import CallbackQuery, Message
 
 from jgram.context import Context
@@ -43,25 +42,22 @@ async def update_handler(update: Union[CallbackQuery, Message],
                                         locale=locale)
         
         filter_passed = False
-        dispatcher = registry.dispatcher
         
         if raw_window.filters:
-            for filter in raw_window.filters:
-                filters_set = dispatcher.filters_factory.resolve(
-                    dispatcher.message_handlers,
-                    **filter.when
-                )           
-                try:
-                    kwargs.update(await check_filters(
-                        get_filters_spec(dispatcher, filters_set), 
-                        (update, )
-                        )
-                    )
-                except FilterNotPassed:
-                    continue
-                else:
+            for filters in raw_window.filters:
+
+                next_step, filters = registry.filters_factory.build(
+                    filters=filters,
+                    handler=registry.dispatcher.message_handlers
+                )
+                checked = await registry.filters_factory.check(
+                    filters,
+                    update
+                )
+                if checked is not False:
+                    kwargs.update(checked)
                     filter_passed = True
-                    raw_window = manager.get_window(name=filter.next_step, 
+                    raw_window = manager.get_window(name=next_step, 
                                                     locale=locale)
                     break
 
@@ -96,9 +92,9 @@ async def update_handler(update: Union[CallbackQuery, Message],
     kwargs['context'] = context
 
     if (
-        (await registry._middlewares.process(
+        (await registry.middlewares.process(
             None, update, **kwargs)) is False
-        or (await registry._middlewares.process(
+        or (await registry.middlewares.process(
             context.window_name, update, **kwargs)) is False
         ):
         

@@ -1,14 +1,28 @@
 from dataclasses import dataclass, field
-from typing import Callable, Dict, Optional
+from typing import Callable, Dict, Literal, Optional, Union
 
 from aiogram import Bot
 from aiogram.types import ContentType, File, Message
 
+MediaTypeLiteral = Union[
+    Literal["animation"],
+    Literal["audio"],
+    Literal["document"],
+    Literal["photo"],
+    Literal["video"]
+]
+
 
 @dataclass
 class MediaType:
-    method: str
-    type_name: str
+    method: Union[
+        Literal["send_animation"],
+        Literal["send_audio"],
+        Literal["send_document"],
+        Literal["send_photo"],
+        Literal["send_video"]
+    ]
+    type_name: MediaTypeLiteral
     
     def get_method(self, bot: Bot) -> Callable:
         return getattr(bot, self.method)
@@ -48,7 +62,7 @@ MEDIA_TYPES = {
 
 @dataclass
 class Media:
-    type: str
+    type: MediaTypeLiteral
     url: Optional[str] = None
     file_id: Optional[str] = None
     path: Optional[str] = None

@@ -7,6 +7,7 @@ from aiogram.dispatcher.handler import Handler
 
 from ..loggers import registry_logger
 from ..manager import WindowsManager
+from ..manager.filters_factory import FiltersFactory
 from .handlers.start import start_handler
 from .handlers.update import update_handler
 from .includer import IncludeData
@@ -15,11 +16,23 @@ from .protocols import RegistryProto
 
 
 class Registry(RegistryProto):
+    """
+    Jgram registry
+    """
     def __init__(self,
                  bot: Optional[Bot] = None,
                  dispatcher: Optional[Dispatcher] = None,
                  token: Optional[str] = None,
                  manager: Optional[WindowsManager] = None):
+        """
+        Jgram registry
+        
+        :param bot: Aiogram's bot instance, defaults to None
+        :param dispatcher: Aiogram's dispatcher instance, defaults to None
+        :param token:  Telegram bot token, defaults to None
+        :param manager: Jgram windows manager instance, defaults to None
+        :return:
+        """
 
         if bot is None and dispatcher is None and token is None:
             raise ValueError('Need\'s `bot`, `dispatcher` or `token` to initialize')
@@ -38,12 +51,11 @@ class Registry(RegistryProto):
         self._dispatcher = dispatcher
 
         self._manager = manager
-        self._middlewares = ProcessMiddleware()
-
+        self.middlewares = ProcessMiddleware()
+        self.filters_factory = FiltersFactory(self.dispatcher)
+        
         include_data = IncludeData(self)
 
-        # register update handlers
-        # insert it to first positions
         self.register_update_handler(start_handler,
                                      self.dispatcher.message_handlers,
                                      include_data, 
@@ -83,18 +95,45 @@ class Registry(RegistryProto):
         return self._manager
     
     def register_middleware(self, callback: Callable, name: Optional[str] = None):
-        self._middlewares.register(callback, name)
+        """
+        register pre process middleware
+        
+        :param callback: awaitable callback that be call as middleware
+        :param name: the name of the window for which will be called middleware, defaults to None
+        :return:
+        """
+        self.middlewares.register(callback, name)
     
     def middleware(self, name: Optional[str] = None):
+        """
+        decorator over .register_middleware
+
+        :param name: the name of the window for which will be called middleware
+        :type name: Optional[str]
+        """
         def decorator(callback: Callable):
+            """
+            decorator over .register_middleware
+            
+            :param callback: awaitable callback that be call as middleware
+            :return: passed function
+            """
             self.register_middleware(callback, name)
             return callback
         return decorator
 
     async def start(self):
+        """
+        alias for aiogram's dispatcher .start_polling
+        :return:
+        """
         await self.dispatcher.start_polling()
 
     async def close(self):
+        """
+        fast close bot session and storages
+        :return:
+        """
         session = await self.bot.get_session()
         await session.close()
         await self.dispatcher.storage.close()

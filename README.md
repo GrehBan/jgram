@@ -9,6 +9,7 @@ for development info see [TODO](/TODO.md) and [CHANGES](/CHANGES.rst)
 ## Table of contents
 - [Installation](#installation)
     - [From sources](#from-sources)
+    - [From PYPI](#from-pypi)
 - [Getting started](#getting-started)
 - [Initialization](#initialization)
     - [Registry](#registry)
@@ -32,6 +33,7 @@ git clone https://github.com/GrehBan/jgram.git
 cd jgram
 poetry install --no-dev
 ```
+
 ### From PYPI
 
 ```bash
@@ -313,6 +315,7 @@ loader = JsonLoader()
 ```
 
 ### Loading windows
+
 ```python
 from jgram import WindowsManager
 
@@ -321,6 +324,7 @@ manager.load_windows("path/to/file/windows.json")
 ```
 
 ## Middlewares
+
 middlewares call before window rendered, and in middleware you can change user context data or manipulate window processing
 
 middlewares can return a True or False, if returns True, update handler will continue render window, but if returns False, window will not be rendered

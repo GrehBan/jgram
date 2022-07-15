@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, List, Type, Union
+from typing import Dict, List, Literal, Optional, Type, TypedDict, Union
 
 from aiogram.types import (
     InlineKeyboardButton,
@@ -12,14 +12,36 @@ from jgram import exceptions
 
 from . import tools
 
+ReplyButtonDict = TypedDict(
+    'ReplyButtonDict',
+    {
+        'text': str,
+        'request_contact': Optional[bool],
+        'request_location': Optional[bool]
+    }
+)
+
+InlineButtonDict = TypedDict(
+    'InlineButtonDict',
+    {
+        'text': str,
+        'callback_data': Optional[str],
+        'url': Optional[str],
+        'login_url': Optional[str],
+        'switch_inline_query': Optional[str],
+        'switch_inline_query_current_chat': Optional[str],
+        'pay': Optional[bool],
+    }
+)
 MarkupType = Union[InlineKeyboardMarkup, ReplyKeyboardMarkup]
-RawMarkupType = List[List[Dict]]
+RawMarkupType = List[List[Union[InlineButtonDict, ReplyButtonDict]]]
+MarkupTypeLiteral = Union[Literal["type"], Literal["inline"]]
 
 
 @dataclass
 class RawMarkup:
     markup: RawMarkupType
-    type: str
+    type: MarkupTypeLiteral
 
     def _build(self, 
                formatting: Dict, 

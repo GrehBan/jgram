@@ -1,12 +1,12 @@
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, TypedDict, Union
 
 from aiogram.types import ParseMode
 
 from .. import exceptions
-from .markup.markup import MarkupType, RawMarkup, RawMarkupType
-from .media.media import MEDIA_TYPES, Media
+from .markup.markup import MarkupType, MarkupTypeLiteral, RawMarkup, RawMarkupType
+from .media.media import MEDIA_TYPES, Media, MediaTypeLiteral
 
 
 class ShowMode(Enum):
@@ -14,26 +14,41 @@ class ShowMode(Enum):
     EDIT = auto()
 
 
-@dataclass
-class Filter:
-    next_step: str
-    when: Dict
+class MediaDict(TypedDict):
+    type: MediaTypeLiteral
+    url: Optional[str]
+    file_id: Optional[str]
+    path: Optional[str]
     
+
+class MarkupDict(TypedDict):
+    type: MarkupTypeLiteral
+    markup: RawMarkupType
+    
+
+class RawWindowReturnsDict(TypedDict):
+    text: Optional[str]
+    media: Optional[Media]
+    parse_mode: Optional[str]
+    web_preview: bool
+    markup: Optional[MarkupType]
+
 
 @dataclass(unsafe_hash=True)
 class RawWindow:
     window_name: str
     text: Optional[str] = None
-    media: Optional[Dict[str, Dict]] = None
+    media: Optional[MediaDict] = None
     parse_mode: Optional[str] = None
     web_preview: bool = True
-    markup: Optional[Dict[str, Union[RawMarkupType, Any]]] = None
+    markup: Optional[MarkupDict] = None
     
     # helpers
     next_step: Optional[str] = None
-    allowed_updates: List[str] = field(default_factory=list)
+    allowed_updates: List[Union[Literal["text"],
+                                MediaTypeLiteral]] = field(default_factory=list)
     reset_context: bool = False
-    filters: List[Filter] = field(default_factory=list)
+    filters: List[Dict] = field(default_factory=list)
     
     def __post_init__(self):
         if self.allowed_updates \
@@ -43,17 +58,8 @@ class RawWindow:
             raise exceptions.InvalidWindowFieldsMap(
                 "Unknown allowed updates list"
             )
-        
-        if self.filters:
-            self.filters: List[Dict]
-            _filters = []
-            for filter in self.filters:
-                filter = filter.copy()
-                next_step = filter.pop('next_step')
-                _filters.append(Filter(next_step, filter))
-            self.filters: List[Filter] = _filters
-    
-    def build(self, context_data: Dict) -> Dict:
+
+    def build(self, context_data: Dict) -> RawWindowReturnsDict:
         text = self.text
         media = self.media
         parse_mode = self.parse_mode

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import IO, Any, Dict, Optional, Union
+from typing import IO, Any, BinaryIO, Dict, Optional, Union
 
 from aiogram import Bot
 from aiogram.types import CallbackQuery, InputMedia, Message
@@ -23,12 +23,21 @@ from .protocols import ManagerProto
 
 
 class WindowsManager(ManagerProto):
+    """
+    Windows manager
+    """
     def __init__(self,
                  storage: Optional[BaseStorage] = None,
                  loader: Optional[LoaderProto] = None,
                  start_window: str = 'start'
                  ):
- 
+        """
+        Windows manager
+
+        :param storage: jgram's users data storage, defaults to None
+        :param loader: jgram's window loader, defaults to None
+        :param start_window: name of window for render on /start command, defaults to 'start'
+        """
         if storage is None:
             storage = MemoryStorage()
             manager_logger.debug(
@@ -55,6 +64,9 @@ class WindowsManager(ManagerProto):
         self._start_window = start_window
         
     async def close(self):
+        """
+        Close storage and clear windows
+        """
         await self.storage.close()
         await self.storage.wait_closed()
         self._windows.clear()
@@ -74,19 +86,40 @@ class WindowsManager(ManagerProto):
     
     @property
     def default_locale(self) -> str:
+        """
+        Get default locale
+        if default locale not found, getting first key
+        of loaded windows, and return it
+
+        :return: ISO locale string
+        """
         if self._loader._default_locale:
             return self._loader._default_locale
         manager_logger.debug(
-            'getting first key of loaded texts dict, '
+            'getting first key of loaded windows dict, '
             'and using it as default locale '
             'because it not set'
         )
         return next(iter(self.windows))
 
-    def load_windows(self, fp: Union[str, IO[bytes]]):
+    def load_windows(self, fp: Union[str, IO]):
+        """
+        alias for jgram's loader .load_windows with saving loaded data
+
+        :param fp: path or file-like decsriptor to load
+        """
         self._windows = self._loader.load_windows(fp=fp)
 
     def get_window(self, name: str, locale: str) -> RawWindow:
+        """
+        Get window by name and locale
+
+        :param name: window name
+        :param locale: locale of window
+        :raises exceptions.LocaleNotFoundError: if locale not found
+        :raises exceptions.WindowNotFoundError: if window not founc
+        :return: jgram's loaded window dataclass
+        """
         windows = self.windows.get(locale)
         if windows is None:
             raise exceptions.LocaleNotFoundError(locale_name=name)
@@ -96,8 +129,7 @@ class WindowsManager(ManagerProto):
         
         return RawWindow(name, **window)
 
-
-    def get_media_source(self, media: Media) -> Union[str, IO[bytes]]:
+    def get_media_source(self, media: Media) -> Union[str, BinaryIO]:
         if media.file_id:
             return media.file_id
         elif media.url:
@@ -112,6 +144,18 @@ class WindowsManager(ManagerProto):
                           mode: ShowMode,
                           name: Optional[str] = None,
                           raw_window: Optional[RawWindow] = None) -> Window:
+        """
+        Switch current window to new, and update data
+        
+        :param update: aiogram's update
+        :param locale: window locale
+        :param context_data: context data
+        :param mode: window show mode, `SEND` or `EDIT`
+        :param name: window name, defaults to None
+        :param raw_window: jgram's raw window object, defaults to None
+        :raises ValueError: if `name` or `raw_window` fields not passed
+        :return: jgram's builded window dataclass
+        """
         if not name and not raw_window:
             raise ValueError(
                 "Need's `raw_window` or `name` to update window"

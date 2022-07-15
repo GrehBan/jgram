@@ -6,7 +6,6 @@
 - [ ] write middlewares tests  
 - [ ] write context tests  
 - [ ] start using mock  
-- [ ] write docstrings  
 - [ ] write filters tests
 
 ### IN PROGRESS
@@ -16,6 +15,8 @@
 - [ ] write redis storage  
 - [ ] restructurize tests  
 - [ ] write examples  
+- [ ] write docs using https://www.sphinx-doc.org/en/master/
+- [ ] write docstrings  
 
 ### DONE ✓
 

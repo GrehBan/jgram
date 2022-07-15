@@ -1,11 +1,17 @@
 from abc import abstractmethod
-from typing import IO, Dict, Optional, Protocol, Union
+from typing import IO, Awaitable, Callable, Dict, List, Optional, Protocol, Tuple, Union
 
-from aiogram import Bot
+from aiogram import Bot, Dispatcher
+from aiogram.dispatcher.filters import AbstractFilter
 from aiogram.types import CallbackQuery, Message
 
 from ..storage.protocols import BaseStorage
 from ..window.window import RawWindow, ShowMode, Window
+
+FilterFunc = Callable[[Union[Message, CallbackQuery]], Optional[Union[bool, Dict]]]
+FiltersList = List[Union[Union[FilterFunc,
+                               Awaitable[FilterFunc]], 
+                         AbstractFilter]]
 
 
 class ManagerProto(Protocol):
@@ -41,4 +47,19 @@ class ManagerProto(Protocol):
                           name: Optional[str] = None,
                           raw_window: Optional[RawWindow] = None,
                           ) -> Window:
+        pass
+
+
+class FiltersFactoryProto(Protocol):
+    @property
+    @abstractmethod
+    def dispatcher(self) -> Dispatcher:
+        pass
+
+    @abstractmethod
+    def build(self, filters: Dict) -> Tuple[str, FiltersList]:
+        pass
+
+    @abstractmethod
+    async def check(self, filters_list: FiltersList) -> Union[Dict, bool]:
         pass
